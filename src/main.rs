@@ -1,12 +1,10 @@
+#![deny(missing_docs)]
+//! routeradar is a cli tool intended to help with file based routing for nextjs and sveltejs
+
 use std::path::PathBuf;
 
-use clap::{Parser, Subcommand, ValueEnum};
-
-#[derive(Debug, Clone, ValueEnum)]
-enum Mode {
-    Next,
-    Svlete,
-}
+use clap::{Parser, Subcommand};
+use routeradar::config;
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about=None, arg_required_else_help=true)]
@@ -17,7 +15,7 @@ struct Args {
 
     /// set operation mode
     #[arg(short, long, value_name = "MODE")]
-    mode: Option<Mode>,
+    mode: Option<config::Mode>,
 
     #[command(subcommand)]
     command: Commands,
