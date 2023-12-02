@@ -1,0 +1,32 @@
+[
+  {
+    "mode": "nextjs",
+    "routes": [
+      {
+        "path": "/"
+      },
+      { "path": "/home", "param": ["/overview"] }
+    ]
+  },
+
+  {
+    "mode": "Nextjs",
+    "routes": [
+      {
+        "path": "/"
+      },
+      {
+        "path": "/dashboard",
+        "params": [
+          "/overview",
+          "/users",
+          "/reports",
+          {
+            "path": "/settings",
+            "params": ["/email"]
+          }
+        ]
+      }
+    ]
+  }
+]
