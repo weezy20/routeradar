@@ -9,7 +9,7 @@ enum Mode {
 }
 
 #[derive(Debug, Parser)]
-#[command(author, version, about, long_about=None)]
+#[command(author, version, about, long_about=None, arg_required_else_help=true)]
 struct Args {
     /// set custom config file
     #[arg(short, long, value_name = "FILE")]
@@ -20,7 +20,7 @@ struct Args {
     mode: Option<Mode>,
 
     #[command(subcommand)]
-    command: Option<Commands>,
+    command: Commands,
 }
 
 #[derive(Debug, Subcommand)]
@@ -30,14 +30,21 @@ enum Commands {
 
     /// add a new route
     Add,
+
+    /// displays all the routes in the project
+    Show,
+
+    /// generates routes from a config file
+    Gen,
 }
 
 fn main() {
     let args = Args::parse();
 
     match &args.command {
-        Some(Commands::Init) => println!("init in process"),
-        Some(Commands::Add) => todo!(),
-        None => todo!(),
+        Commands::Init => todo!(),
+        Commands::Add => todo!(),
+        Commands::Show => todo!(),
+        Commands::Gen => todo!(),
     }
 }
