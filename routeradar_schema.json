@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RR",
+  "description": "Represents a routing configuration.",
+  "type": "object",
+  "required": [
+    "mode",
+    "routes"
+  ],
+  "properties": {
+    "mode": {
+      "description": "The mode of operation.",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Mode"
+        }
+      ]
+    },
+    "routes": {
+      "description": "The routes of the application.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Route"
+      }
+    }
+  },
+  "definitions": {
+    "Mode": {
+      "description": "Represents the mode of operation.",
+      "oneOf": [
+        {
+          "description": "For Nextjs mode.",
+          "type": "string",
+          "enum": [
+            "Next"
+          ]
+        },
+        {
+          "description": "For Sveltekit mode.",
+          "type": "string",
+          "enum": [
+            "Svelte"
+          ]
+        }
+      ]
+    },
+    "Route": {
+      "description": "Represents a route with its properties.",
+      "type": "object",
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "catch_all": {
+          "description": "Indicates if the route is a catch-all.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "children": {
+          "description": "Children routes of the current route.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/definitions/Route"
+          }
+        },
+        "dynamic": {
+          "description": "Indicates if the route is dynamic.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "path": {
+          "description": "The path of the route.",
+          "type": "string"
+        }
+      }
+    }
+  }
+}

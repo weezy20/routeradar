@@ -1,32 +1,12 @@
-[
-  {
-    "mode": "nextjs",
-    "routes": [
-      {
-        "path": "/"
-      },
-      { "path": "/home", "param": ["/overview"] }
-    ]
-  },
-
-  {
-    "mode": "Nextjs",
-    "routes": [
-      {
-        "path": "/"
-      },
-      {
-        "path": "/dashboard",
-        "params": [
-          "/overview",
-          "/users",
-          "/reports",
-          {
-            "path": "/settings",
-            "params": ["/email"]
-          }
-        ]
-      }
-    ]
-  }
-]
+{
+  "$schema": "./routeradar_schema.json",
+  "mode": "Next",
+  "routes": [
+    {
+      "path": "/"
+    },
+    {
+      "catch_all": null
+    }
+  ]
+}

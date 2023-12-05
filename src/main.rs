@@ -1,10 +1,11 @@
 #![deny(missing_docs)]
 //! routeradar is a cli tool intended to help with file based routing for nextjs and sveltejs
 
-use std::path::PathBuf;
+use std::{io::Write, path::PathBuf};
 
 use clap::{Parser, Subcommand};
 use routeradar::config;
+use std::fs::File;
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about=None, arg_required_else_help=true)]
@@ -37,6 +38,11 @@ enum Commands {
 }
 
 fn main() {
+    let schema = schemars::schema_for!(config::RR);
+    let schema_json = serde_json::to_string_pretty(&schema).unwrap();
+
+    let mut file = File::create("routeradar_schema.json").unwrap();
+    file.write_all(schema_json.as_bytes()).unwrap();
     let args = Args::parse();
 
     match &args.command {
