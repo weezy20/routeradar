@@ -4,3 +4,6 @@
 
 /// Config files for routeradar
 pub mod config;
+
+/// Scanner module
+pub mod scanner;
