@@ -1,7 +1,7 @@
 #![deny(missing_docs)]
 //! routeradar is a cli tool intended to help with file based routing for nextjs and sveltejs
 
-use std::{env::args, io::Write, path::PathBuf};
+use std::{io::Write, path::PathBuf};
 
 use clap::{Parser, Subcommand};
 use routeradar::config;
@@ -58,8 +58,16 @@ fn main() {
         Commands::Show => todo!(),
         Commands::Gen => todo!(),
         Commands::Deb => {
-            let mode = routeradar::scanner::get_mode(&args.path.unwrap()).unwrap();
-            println!("{:?}", mode)
+            let mode = routeradar::scanner::get_mode(&args.path.unwrap());
+            match mode {
+                Ok(mode) => {
+                    println!("{:?}", mode);
+                }
+                Err(error) => {
+                    println!("{}", error)
+                }
+            }
+            // println!("{:?}", mode);
         }
     }
 }
