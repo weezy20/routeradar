@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use walkdir::{DirEntry, WalkDir};
 
-use crate::config::{Error, ErrorKind, Mode};
+use crate::config::{Error, ErrorKind, Mode, Route};
 
 fn is_ignored(entry: &DirEntry) -> bool {
     let path = entry.path();
@@ -45,4 +45,33 @@ pub fn get_root_path(mode: &Mode) -> PathBuf {
         Mode::Next => return "./app/".into(),
         Mode::Svelte => return "./src/routes/".into(),
     }
+}
+
+/// Generate all routes
+pub fn gen_routes(path: &PathBuf) -> Result<Vec<Route>, Error> {
+    println!("{}", path.display());
+    let mut routes: Vec<Route> = Vec::new();
+
+    for entry in WalkDir::new(path).into_iter().filter_map(|e| e.ok()) {
+        let file = entry.path();
+
+        if file.is_dir() {
+            let children = gen_routes(&file.to_path_buf())?;
+            routes.push(Route {
+                path: file.to_string_lossy().to_string(),
+                dynamic: None,
+                catch_all: None,
+                children: Some(children),
+            });
+        } else if file.ends_with("+page.svelte") {
+            routes.push(Route {
+                path: file.to_string_lossy().to_string(),
+                dynamic: None,
+                catch_all: None,
+                children: None,
+            })
+        }
+    }
+
+    Ok(routes)
 }
