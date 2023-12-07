@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use walkdir::{DirEntry, WalkDir};
 
-use crate::config;
+use crate::config::{Error, ErrorKind, Mode};
 
 fn is_ignored(entry: &DirEntry) -> bool {
     let path = entry.path();
@@ -17,7 +17,7 @@ fn is_ignored(entry: &DirEntry) -> bool {
 }
 
 /// Gets the mode to operate on by traversing the files of the given path.
-pub fn get_mode(path: &PathBuf) -> anyhow::Result<config::Mode, config::Error> {
+pub fn get_mode(path: &PathBuf) -> anyhow::Result<Mode, Error> {
     for entry in WalkDir::new(path)
         .into_iter()
         .filter_entry(|e| !is_ignored(e))
@@ -27,14 +27,22 @@ pub fn get_mode(path: &PathBuf) -> anyhow::Result<config::Mode, config::Error> {
         let file = entry.file_name();
 
         if file == "next.config.js" {
-            return Ok(config::Mode::Next);
+            return Ok(Mode::Next);
         } else if file == "svelte.config.js" {
-            return Ok(config::Mode::Svelte);
+            return Ok(Mode::Svelte);
         }
     }
-    Err(config::Error::new(
-        config::ErrorKind::InvalidPath,
+    Err(Error::new(
+        ErrorKind::InvalidPath,
         Some(path.canonicalize().expect("canonicalize path")),
         "Invalid path provided.".to_string(),
     ))
+}
+
+/// Get the default root route path for a mode
+pub fn get_root_path(mode: &Mode) -> PathBuf {
+    match mode {
+        Mode::Next => return "./app/".into(),
+        Mode::Svelte => return "./src/routes/".into(),
+    }
 }
