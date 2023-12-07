@@ -50,11 +50,11 @@ fn main() {
     // let mut file = File::create("routeradar_schema.json").unwrap();
     // file.write_all(schema_json.as_bytes()).unwrap();
     let args = Args::parse();
+    let mut path: PathBuf = Default::default();
 
     match &args.command {
         Commands::Init => {
             let mode = routeradar::scanner::get_mode(&args.path.unwrap());
-            let mut path: PathBuf = Default::default();
             println!("{:?}", mode);
 
             if args.config.is_some() {
@@ -72,7 +72,19 @@ fn main() {
             println!("{}", path.display())
         }
         Commands::Add => todo!(),
-        Commands::Show => todo!(),
+        Commands::Show => {
+            let mode = config::Mode::Svelte;
+            let lawda = scanner::get_root_path(&mode);
+            // TODO: join working dir with root_path for mode.
+            let routes = scanner::gen_routes(todo!());
+            match routes {
+                Ok(data) => {
+                    let json = serde_json::to_string(&data).unwrap();
+                    println!("{}", json)
+                }
+                Err(err) => println!("{}", err),
+            }
+        }
         Commands::Gen => todo!(),
         Commands::Deb => {
             let mode = routeradar::scanner::get_mode(&args.path.unwrap());
