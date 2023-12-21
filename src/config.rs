@@ -15,14 +15,14 @@ pub enum Mode {
 }
 
 /// Represents a route with its properties.
-#[derive(Serialize, Deserialize, JsonSchema)]
+#[derive(Serialize, Deserialize, JsonSchema, Debug)]
 pub struct Route {
     /// The path of the route.
     pub path: String,
     /// Indicates if the route is dynamic.
-    pub dynamic: Option<bool>,
+    // pub dynamic: Option<bool>,
     /// Indicates if the route is a catch-all.
-    pub catch_all: Option<bool>,
+    // pub catch_all: Option<bool>,
     /// Children routes of the current route.
     pub children: Option<Vec<Route>>,
 }

@@ -74,9 +74,11 @@ fn main() {
         Commands::Add => todo!(),
         Commands::Show => {
             let mode = config::Mode::Svelte;
-            let lawda = scanner::get_root_path(&mode);
-            // TODO: join working dir with root_path for mode.
-            let routes = scanner::gen_routes(todo!());
+            let args_path = PathBuf::from(args.path.unwrap()).canonicalize().unwrap();
+            let relative_path = scanner::get_root_path(&mode);
+            let joined_path = args_path.join(&relative_path);
+
+            let routes = scanner::generate_routes(&joined_path);
             match routes {
                 Ok(data) => {
                     let json = serde_json::to_string(&data).unwrap();
