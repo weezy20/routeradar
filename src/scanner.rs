@@ -53,7 +53,7 @@ pub fn get_root_path(mode: &Mode) -> PathBuf {
 /// Generate all routes
 /// Recursively scan the given path and generate routes based on the folder structure.
 pub fn generate_routes(path: &PathBuf) -> Result<TrieNode, Error> {
-    let mut routes: Vec<String> = Vec::new();
+    let mut route_trie = TrieNode::new(true);
 
     for entry in WalkDir::new(path).into_iter().filter_map(|e| e.ok()) {
         if entry.path().is_file() && entry.path().file_name().unwrap() == "+page.svelte" {
@@ -65,14 +65,18 @@ pub fn generate_routes(path: &PathBuf) -> Result<TrieNode, Error> {
                 .to_string_lossy()
                 .into_owned();
 
-            routes.push(relative_path)
-        }
-    }
+            // Construct cleaned path without "+page.svelte" for children routes
+            let cleaned_path =
+                if relative_path.ends_with("/+page.svelte") && relative_path != "/+page.svelte" {
+                    relative_path.trim_end_matches("/+page.svelte").to_owned()
+                } else {
+                    "/".to_owned()
+                };
 
-    let mut route_trie = TrieNode::new();
-    for route in routes {
-        let route_parts: Vec<&str> = route.trim_start_matches('/').split('/').collect();
-        route_trie.insert(&route_parts)
+            let route_parts: Vec<&str> =
+                cleaned_path.split('/').filter(|&s| !s.is_empty()).collect();
+            route_trie.insert(&route_parts)
+        }
     }
 
     Ok(route_trie)

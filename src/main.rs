@@ -80,7 +80,11 @@ fn main() {
 
             let routes = scanner::generate_routes(&joined_path);
             match routes {
-                Ok(data) => data.display(0),
+                Ok(data) => {
+                    let bla = data.does();
+                    println!("{:#?}", bla);
+                    data.display(0)
+                }
                 Err(err) => println!("{}", err),
             }
         }
