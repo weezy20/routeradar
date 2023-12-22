@@ -80,10 +80,7 @@ fn main() {
 
             let routes = scanner::generate_routes(&joined_path);
             match routes {
-                Ok(data) => {
-                    let json = serde_json::to_string(&data).unwrap();
-                    println!("{}", json)
-                }
+                Ok(data) => data.display(0),
                 Err(err) => println!("{}", err),
             }
         }

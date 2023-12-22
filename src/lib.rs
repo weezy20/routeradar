@@ -7,3 +7,6 @@ pub mod config;
 
 /// Scanner module
 pub mod scanner;
+
+/// Trie for routes related stuff.
+pub mod trie;
