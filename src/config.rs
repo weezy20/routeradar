@@ -1,9 +1,8 @@
 /// Config code baby
 use clap::ValueEnum;
-use core::fmt;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
+use std::{fmt, path::PathBuf};
 
 /// Represents the mode of operation.
 #[derive(Debug, Clone, ValueEnum, Serialize, Deserialize, JsonSchema)]
@@ -25,6 +24,20 @@ pub struct Route {
     // pub catch_all: Option<bool>,
     /// Children routes of the current route.
     pub children: Option<Vec<Route>>,
+}
+
+impl fmt::Display for Route {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.path)?;
+
+        if let Some(children) = &self.children {
+            for child in children {
+                write!(f, "\n  └── {}", child)?;
+            }
+        }
+
+        Ok(())
+    }
 }
 
 /// Represents a routing configuration.
