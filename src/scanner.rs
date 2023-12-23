@@ -2,7 +2,10 @@ use std::path::PathBuf;
 
 use walkdir::{DirEntry, WalkDir};
 
-use crate::config::{Error, ErrorKind, Mode, Route};
+use crate::{
+    config::{Error, ErrorKind, Mode},
+    trie::TrieNode,
+};
 
 fn is_ignored(entry: &DirEntry) -> bool {
     let path = entry.path();
@@ -42,36 +45,39 @@ pub fn get_mode(path: &PathBuf) -> anyhow::Result<Mode, Error> {
 /// Get the default root route path for a mode
 pub fn get_root_path(mode: &Mode) -> PathBuf {
     match mode {
-        Mode::Next => return "./app/".into(),
-        Mode::Svelte => return "./src/routes/".into(),
+        Mode::Next => return PathBuf::from("app/"),
+        Mode::Svelte => return PathBuf::from("src/routes/"),
     }
 }
 
 /// Generate all routes
-pub fn gen_routes(path: &PathBuf) -> Result<Vec<Route>, Error> {
-    println!("{}", path.display());
-    let mut routes: Vec<Route> = Vec::new();
+/// Recursively scan the given path and generate routes based on the folder structure.
+pub fn generate_routes(path: &PathBuf) -> Result<TrieNode, Error> {
+    let mut route_trie = TrieNode::new(true);
 
     for entry in WalkDir::new(path).into_iter().filter_map(|e| e.ok()) {
-        let file = entry.path();
+        if entry.path().is_file() && entry.path().file_name().unwrap() == "+page.svelte" {
+            // Calculate relative path from base path
+            let relative_path = entry
+                .path()
+                .strip_prefix(path)
+                .unwrap()
+                .to_string_lossy()
+                .into_owned();
 
-        if file.is_dir() {
-            let children = gen_routes(&file.to_path_buf())?;
-            routes.push(Route {
-                path: file.to_string_lossy().to_string(),
-                dynamic: None,
-                catch_all: None,
-                children: Some(children),
-            });
-        } else if file.ends_with("+page.svelte") {
-            routes.push(Route {
-                path: file.to_string_lossy().to_string(),
-                dynamic: None,
-                catch_all: None,
-                children: None,
-            })
+            // Construct cleaned path without "+page.svelte" for children routes
+            let cleaned_path =
+                if relative_path.ends_with("/+page.svelte") && relative_path != "/+page.svelte" {
+                    relative_path.trim_end_matches("/+page.svelte").to_owned()
+                } else {
+                    "/".to_owned()
+                };
+
+            let route_parts: Vec<&str> =
+                cleaned_path.split('/').filter(|&s| !s.is_empty()).collect();
+            route_trie.insert(&route_parts)
         }
     }
 
-    Ok(routes)
+    Ok(route_trie)
 }
