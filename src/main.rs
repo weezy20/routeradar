@@ -81,7 +81,7 @@ fn main() {
             let routes = scanner::generate_routes(&joined_path);
             match routes {
                 Ok(data) => {
-                    let generated_routes = data.does();
+                    let generated_routes = data.gen_route();
                     for route in generated_routes {
                         println!("{}", route)
                     }
