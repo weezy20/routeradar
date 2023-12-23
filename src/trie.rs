@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::config::Route;
 
-/// TrieNode struct
+/// Represents a node in a trie data structure for route handling
 #[derive(Debug)]
 pub struct TrieNode {
     /// map of Node's children
@@ -12,7 +12,7 @@ pub struct TrieNode {
 }
 
 impl TrieNode {
-    /// Constructor for TrieNode
+    /// Creates a new TrieNode with the specified parent status
     pub fn new(is_parent: bool) -> Self {
         TrieNode {
             children: HashMap::new(),
@@ -20,7 +20,7 @@ impl TrieNode {
         }
     }
 
-    /// Insert a route into the Tride
+    /// Inserts a route into the trie
     pub fn insert(&mut self, path_segments: &[&str]) {
         if path_segments.is_empty() {
             return;
@@ -50,7 +50,7 @@ impl TrieNode {
         }
     }
 
-    /// Display the trie structure
+    /// Display the trie structure in a hierarchical format
     pub fn display(&self, indent: usize) {
         for (part, child) in &self.children {
             println!(
@@ -63,13 +63,13 @@ impl TrieNode {
         }
     }
 
-    /// does something cool
-    pub fn does(&self) -> Vec<Route> {
-        let mut domo: Vec<Route> = Vec::new();
+    /// Generate routes based on the nodes in trie
+    pub fn gen_route(&self) -> Vec<Route> {
+        let mut routes: Vec<Route> = Vec::new();
         for (part, child) in &self.children {
-            let child_routes = child.does();
+            let child_routes = child.gen_route();
 
-            domo.push(Route {
+            routes.push(Route {
                 path: part.to_owned(),
                 children: if self.is_parent {
                     Some(child_routes)
@@ -78,6 +78,6 @@ impl TrieNode {
                 },
             })
         }
-        return domo;
+        return routes;
     }
 }

@@ -5,8 +5,8 @@
 /// Config files for routeradar
 pub mod config;
 
-/// Scanner module
+/// Scanner module for routeradar
 pub mod scanner;
 
-/// Trie for routes related stuff.
+/// Trie data structure for managing routes in Routeradar
 pub mod trie;
